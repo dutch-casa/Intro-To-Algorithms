@@ -5,4 +5,4 @@ Auburn's intro to algorithms class
 
 
 
-Topics Covered:  (will update this list as course progresses)
+Topics Covered:  <sup><sub>(will update this list as course progresses)</sup></sub>
