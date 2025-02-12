@@ -17,68 +17,48 @@ See https://www.w3schools.com/python/python_iterators.asp for how to implement a
 '''
 # your code here
 class HashMap:
-    def __init__(self):
-        self.size = 1024
-        self.keys = [None] * self.size
-        self.values = [None] * self.size
+    def __init__(self, size=1024):
+        self.size = size
+        # Each bucket is a list to handle collisions via chaining.
+        self.table = [[] for _ in range(self.size)]
         self.count = 0
 
     def insert(self, key, value):
         index = hash(key) % self.size
-        if self.keys[index] is None:
-            self.keys[index] = key
-            self.values[index] = value
-            self.count += 1
-        else:
-            if self.keys[index] == key:
-                self.values[index] = value
-            else:
-                for i in range(self.size):
-                    if self.keys[i] is None:
-                        self.keys[i] = key
-                        self.values[i] = value
-                        self.count += 1
-                        break
-                    elif self.keys[i] == key:
-                        self.values[i] = value
-                        break
-
-    def delete(self, key):
-        index = hash(key) % self.size
-        if self.keys[index] is None:
-            return
-        elif self.keys[index] == key:
-            self.keys[index] = None
-            self.values[index] = None
-            self.count -= 1
-        else:
-            for i in range(self.size):
-                if self.keys[i] is None:
-                    return
-                elif self.keys[i] == key:
-                    self.keys[i] = None
-                    self.values[i] = None
-                    self.count -= 1
-                    break
+        bucket = self.table[index]
+        # Check if the key already exists in the bucket.
+        for i, (k, v) in enumerate(bucket):
+            if k == key:
+                # Update the value if key exists.
+                bucket[i] = (key, value)
+                return
+        # Key does not exist, so append it.
+        bucket.append((key, value))
+        self.count += 1
 
     def get(self, key):
         index = hash(key) % self.size
-        if self.keys[index] is None:
-            return None
-        elif self.keys[index] == key:
-            return self.values[index]
-        else:
-            for i in range(self.size):
-                if self.keys[i] is None:
-                    return None
-                elif self.keys[i] == key:
-                    return self.values[i]
-                    break
+        bucket = self.table[index]
+        for k, v in bucket:
+            if k == key:
+                return v
+        return None
+
+    def delete(self, key):
+        index = hash(key) % self.size
+        bucket = self.table[index]
+        for i, (k, v) in enumerate(bucket):
+            if k == key:
+                del bucket[i]
+                self.count -= 1
+                return
 
     def __iter__(self):
-        for i in range(self.size):
-            if self.keys[i] is not None:
-                yield self.keys[i], self.values[i]
+        # Yield only non-empty key, value pairs.
+        for bucket in self.table:
+            for pair in bucket:
+                yield pair
+
 
 
 '''
