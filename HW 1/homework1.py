@@ -19,34 +19,51 @@ See https://www.w3schools.com/python/python_iterators.asp for how to implement a
 class HashMap:
     def __init__(self, size=1024):
         self.size = size
-        # Each bucket is a list to handle collisions via chaining.
-        self.table = [[] for _ in range(self.size)]
+        self.tables = [[] for _ in range(self.size)]
         self.count = 0
 
     def insert(self, key, value):
-        index = hash(key) % self.size
-        bucket = self.table[index]
-        # Check if the key already exists in the bucket.
+        if isinstance(key, int):
+            numeric_key = key
+        elif isinstance(key, str):
+            numeric_key = int.from_bytes(key.encode('utf-8'), 'little')
+        else:
+            raise TypeError("Key must be an int or str")
+        
+        index = numeric_key % self.size
+        bucket = self.tables[index]
         for i, (k, v) in enumerate(bucket):
             if k == key:
-                # Update the value if key exists.
                 bucket[i] = (key, value)
                 return
-        # Key does not exist, so append it.
         bucket.append((key, value))
         self.count += 1
 
     def get(self, key):
-        index = hash(key) % self.size
-        bucket = self.table[index]
+        if isinstance(key, int):
+            numeric_key = key
+        elif isinstance(key, str):
+            numeric_key = int.from_bytes(key.encode('utf-8'), 'little')
+        else:
+            raise TypeError("Key must be an int or str")
+        
+        index = numeric_key % self.size
+        bucket = self.tables[index]
         for k, v in bucket:
             if k == key:
                 return v
         return None
 
     def delete(self, key):
-        index = hash(key) % self.size
-        bucket = self.table[index]
+        if isinstance(key, int):
+            numeric_key = key
+        elif isinstance(key, str):
+            numeric_key = int.from_bytes(key.encode('utf-8'), 'little')
+        else:
+            raise TypeError("Key must be an int or str")
+        
+        index = numeric_key % self.size
+        bucket = self.tables[index]
         for i, (k, v) in enumerate(bucket):
             if k == key:
                 del bucket[i]
@@ -54,12 +71,9 @@ class HashMap:
                 return
 
     def __iter__(self):
-        # Yield only non-empty key, value pairs.
-        for bucket in self.table:
-            for pair in bucket:
-                yield pair
-
-
+        for bucket in self.tables:
+            for key, value in bucket:
+                yield key, value
 
 '''
 Problem 2: Use your hashmap class to count the number of each substring of length k in a DNA sequence. 
@@ -111,5 +125,11 @@ def hash_method(A, target):
     return None
 
 print(target)
-print(brute_force(A, target))
-print(hash_method(A, target))
+start = time.time()
+bf = brute_force(A, target)
+end = time.time()
+print("brute force:", bf, "time:", end - start)
+start = time.time()
+hm = hash_method(A, target)
+end = time.time()
+print("hash method:", hm, "time:", end - start)
