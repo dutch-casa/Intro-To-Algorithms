@@ -16,6 +16,69 @@ Implement insert(self, key, value), delete(self, key), get(self, key), and iter(
 See https://www.w3schools.com/python/python_iterators.asp for how to implement an iterator in python
 '''
 # your code here
+class HashMap:
+    def __init__(self):
+        self.size = 1024
+        self.keys = [None] * self.size
+        self.values = [None] * self.size
+        self.count = 0
+
+    def insert(self, key, value):
+        index = hash(key) % self.size
+        if self.keys[index] is None:
+            self.keys[index] = key
+            self.values[index] = value
+            self.count += 1
+        else:
+            if self.keys[index] == key:
+                self.values[index] = value
+            else:
+                for i in range(self.size):
+                    if self.keys[i] is None:
+                        self.keys[i] = key
+                        self.values[i] = value
+                        self.count += 1
+                        break
+                    elif self.keys[i] == key:
+                        self.values[i] = value
+                        break
+
+    def delete(self, key):
+        index = hash(key) % self.size
+        if self.keys[index] is None:
+            return
+        elif self.keys[index] == key:
+            self.keys[index] = None
+            self.values[index] = None
+            self.count -= 1
+        else:
+            for i in range(self.size):
+                if self.keys[i] is None:
+                    return
+                elif self.keys[i] == key:
+                    self.keys[i] = None
+                    self.values[i] = None
+                    self.count -= 1
+                    break
+
+    def get(self, key):
+        index = hash(key) % self.size
+        if self.keys[index] is None:
+            return None
+        elif self.keys[index] == key:
+            return self.values[index]
+        else:
+            for i in range(self.size):
+                if self.keys[i] is None:
+                    return None
+                elif self.keys[i] == key:
+                    return self.values[i]
+                    break
+
+    def __iter__(self):
+        for i in range(self.size):
+            if self.keys[i] is not None:
+                yield self.keys[i], self.values[i]
 
 
 '''
@@ -24,6 +87,19 @@ Print out the repeated items and the number of times they were repeated
 run it on string "ATCTTGGTTATTGCGTGGTTATTCTTGC" with k=4
 '''
 #your code here
+def count_substrings(sequence, k):
+    map = HashMap()
+    for i in range(len(sequence) - k + 1):
+        substring = sequence[i:i+k]
+        if map.get(substring) is not None:
+            map.insert(substring, map.get(substring) + 1)
+        else:
+            map.insert(substring, 1)
+    for key, value in map:
+        if value > 1:
+            print(key, value)
+
+count_substrings("ATCTTGGTTATTGCGTGGTTATTCTTGC", 4)
 
 
 '''
@@ -33,5 +109,27 @@ Code this two ways. Once brute force with nested for loops. And once using hashi
 Use the input below. Bonus to code the sorting/binary search method. Feel free to use sort() or sorted() but code binary search yourself.
 Compare the time taken between the implementations using the time package imported above.
 '''
-A = [random.randint(0,1000000000) for i in range(10000)]
+A = [random.randint(0,10000) for i in range(10000)]
 target = A[random.randint(0, len(A)-1)] + A[random.randint(0,len(A)-1)]
+
+
+def brute_force(A, target):
+    for i in range(len(A)):
+        for j in range(i+1, len(A)):
+            if A[i] + A[j] == target:
+                return A[i], A[j]
+    return None
+
+def hash_method(A, target):
+    map = {}
+    for i in range(len(A)):
+        complement = target - A[i]
+        if complement in map:
+            return complement, A[i]
+        else:
+            map[A[i]] = i
+    return None
+
+print(target)
+print(brute_force(A, target))
+print(hash_method(A, target))
