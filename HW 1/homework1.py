@@ -22,13 +22,18 @@ class HashMap:
         self.tables = [[] for _ in range(self.size)]
         self.count = 0
 
-    def insert(self, key, value):
+    def myHash(self, key):
         if isinstance(key, int):
             numeric_key = key
         elif isinstance(key, str):
             numeric_key = int.from_bytes(key.encode('utf-8'), 'little')
         else:
             raise TypeError("Key must be an int or str")
+        return numeric_key
+
+    def insert(self, key, value):
+        
+        numeric_key = self.myHash(key)
         
         index = numeric_key % self.size
         bucket = self.tables[index]
@@ -40,12 +45,9 @@ class HashMap:
         self.count += 1
 
     def get(self, key):
-        if isinstance(key, int):
-            numeric_key = key
-        elif isinstance(key, str):
-            numeric_key = int.from_bytes(key.encode('utf-8'), 'little')
-        else:
-            raise TypeError("Key must be an int or str")
+        
+        numeric_key = self.myHash(key)
+
         
         index = numeric_key % self.size
         bucket = self.tables[index]
@@ -55,12 +57,9 @@ class HashMap:
         return None
 
     def delete(self, key):
-        if isinstance(key, int):
-            numeric_key = key
-        elif isinstance(key, str):
-            numeric_key = int.from_bytes(key.encode('utf-8'), 'little')
-        else:
-            raise TypeError("Key must be an int or str")
+        
+        numeric_key = self.myHash(key)
+
         
         index = numeric_key % self.size
         bucket = self.tables[index]
@@ -109,7 +108,7 @@ target = A[random.randint(0, len(A)-1)] + A[random.randint(0,len(A)-1)]
 
 def brute_force(A, target):
     for i in range(len(A)):
-        for j in range(i+1, len(A)):
+        for j in range(len(A)):
             if A[i] + A[j] == target:
                 return A[i], A[j]
     return None
