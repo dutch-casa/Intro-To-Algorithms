@@ -138,7 +138,7 @@ def benchmark_sorting_algorithms():
     quick_median_times = []
     median_lmh_times = []
     
-
+    #loop through sizes
     for size in sizes:
         #make an array of random numbers of size
         A = [random.randint(0, 1000000000) for _ in range(size)]
@@ -153,24 +153,28 @@ def benchmark_sorting_algorithms():
         start = time.time()
         merge_sort(A1)
         end = time.time()
+        #push time on array for results
         merge_times.append(end - start)
 
         # Benchmark quick sort with random pivot
         start = time.time()
         quick_sort_rand(A2, 0, len(A2) - 1)
         end = time.time()
+        #push time on array for results
         quick_rand_times.append(end - start)
 
         # Benchmark quick sort with median of three random elements
         start = time.time()
         quick_sort_median(A3, 0, len(A3) - 1)
         end = time.time()
+        #push time on array for results
         quick_median_times.append(end - start)
 
         # benchmark quicksort with median of three deterministic elements
         start = time.time()
         quick_sort_median2(A4, 0, len(A4) - 1)
         end = time.time()
+        #push time on array for results
         median_lmh_times.append(end - start)
 
     return sizes, merge_times, quick_rand_times, quick_median_times, median_lmh_times
