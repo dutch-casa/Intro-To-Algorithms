@@ -8,3 +8,7 @@ Topics Covered: <sup><sub>(will update this list as course progresses)</sup></su
 - Python Refresher
 - Hashmap Implementation
 - Substrings (sliding window w/ hashmap)
+- Merge Sort
+- Quick Sort
+  - Median of three
+  - Random
